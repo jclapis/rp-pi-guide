@@ -2,6 +2,7 @@
 
 To run a Rocket Pool node on a Raspberry Pi, you'll need to first have a working Raspberry Pi. 
 If you already have one up and running - great! You can skip down to the end of this page, where you get to choose a Rocket Pool configuration.
+Just make sure you have **a fan attached** and **an SSD mounted** before you go.
 If you're starting from scratch, then read on.
 
 
@@ -13,9 +14,11 @@ At a minimum, these are the recommended components that you'll need to buy in or
 - A **MicroSD card**. It doesn't have to be big, 16 GB is plenty and they're pretty cheap now... but it should be at least a **Class 10 (U1)**.
 - A **MicroSD to USB** adapter for your PC. This is needed so you can install the Operating System onto the card before loading it into the Pi.
   If your PC already has one of these, then you don't need to pick up a new one.
-- Some **heatsinks**. You're going to be running the Pi under heavy load 24/7, and it's going to get hot. Heatsinks will help so it doesn't throttle itself.
+- Some **heatsinks**. You're going to be running the Pi under heavy load 24/7, and it's going to get hot.
+  Heatsinks will help so it doesn't throttle itself. You ideally want a set of 3: one for the CPU, one for the RAM, and one for the USB controller.
+  [Here is a good example of a nice set](https://www.canakit.com/raspberry-pi-4-heat-sinks.html).
 - A 40mm **fan**. Same as the above, the goal is to keep things cool while running your Rocket Pool node.
-- A **case with a fan mount** to tie it all together.
+- A **case with a fan mount** to tie it all together. Note that if you get [a heatsink case like this](https://www.amazon.com/Raspberry-Armor-Metal-Aluminium-Heatsink/dp/B07VWM4J4L), you won't need to get the heatsinks and fan separately.
 
 
 You can get a lot of this stuff bundled together for convenience - for example, [Canakit offers a kit](https://www.amazon.com/CanaKit-Raspberry-8GB-Starter-Kit/dp/B08956GVXN) with many components included.
@@ -35,6 +38,20 @@ Other components you'll need:
 Depending on your location, sales, your choice of SSD, and how many of these things you already have, you're probably going to end up spending **around $200 to $500 USD** for a complete setup.
 
 
+## Making the Fan Run More Quietly
+
+When you get the fan, by default you're probably going to be instructed to connect it to the 5v GPIO pin, as shown in the picture below.
+The fan will have a connector with two holes; the black one should go to GND (pin 6), and the red one should go to +5v (pin 4).
+![hi](images/Pinout.png)
+
+However, in my experience, this makes the fan run very loud and fast which isn't very necessary.
+If you want to make it more quiet while still running cool, try connecting it to the 3.3v pin (Pin 1, the blue one) instead of the 5v pin.
+This means that on your fan, the black point will go to GND (pin 6) still, but now the red point will go to +3.3v (pin 1).
+
+If your fan has a connector where the two holes are side by side and you can't split them apart, you can put [some jumpers like this](https://www.amazon.com/GenBasic-Female-Solderless-Breadboard-Prototyping/dp/B077N7J6C4) in between it and the GPIO pins on the Pi.
+
+
+
 ## Installing the Operating System
 
 There are a few varieties of Linux OS that support the Raspberry Pi. For this guide, we're going to stick to **Ubuntu 20.04**.
@@ -51,7 +68,14 @@ The fine folks at Canonical have written up [a wonderful guide on how to install
 Follow steps 1 through 4 of the guide above **(do NOT do step 5, because we don't want a desktop on this machine)**.
 For the Operating System image, you want to select **Ubuntu Server 20.04.2 LTS (RPi 3/4/400) 64-bit server OS with long-term support for arm64 architectures**.
 
-Once that's complete, your Pi is up and running, and ready to run Rocket Pool! Next up, you need to decide which configuration you want to use.
+Once that's complete, the next step is to mount the SSD.
+
+
+## Mounting the SSD
+
+COMING SOON
+
+And with that, your Pi is up and running and ready to run Rocket Pool! Next up, you need to decide which configuration you want to use.
 
 
 ## Choosing a Rocket Pool Configuration
