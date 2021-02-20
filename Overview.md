@@ -1,5 +1,7 @@
 # Setting up Rocket Pool on a Raspberry Pi
 
+![Raspberry Pi <3 Rocket Pool](images/logo.png)
+
 TBD
 
 ### What is a Raspberry Pi?
