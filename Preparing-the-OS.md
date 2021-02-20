@@ -11,7 +11,7 @@ So as you may have surmised, the core OS is running off of the microSD card.
 That's not nearly large enough or fast enough to hold all of the ETH1 and ETH2 blockchain data, which is where the SSD comes in.
 To use it, we have to set it up with a file system and mount it to the Pi.
 
-#### Connecting the SSD to the USB 3.0 Ports
+### Connecting the SSD to the USB 3.0 Ports
 
 Start by plugging your SSD into one of the Pi's USB 3.0 ports. These are the **blue** ports, not the black ones:
 
@@ -21,7 +21,7 @@ The black ones are slow USB 2.0 ports; they're only good for stuff like mice and
 If you have your keyboard plugged into the blue ports, take it out and plug it into the black ones now.
 
 
-#### Formatting the SSD and Creating a New Partition
+### Formatting the SSD and Creating a New Partition
 
 **WARNING: This process is going to erase everything on your SSD.
 If you already have a partition with stuff on it, SKIP THIS STEP because you're about to delete it all!
@@ -73,7 +73,7 @@ $ sudo blkid
 If you see all of that, then you're good. Grab the `UUID="..."` output and put it somewhere temporarily, because you're going to need it in a minute.
 
 
-#### Optimizing the New Partition
+### Optimizing the New Partition
 Next, let's tune the new filesystem a little to optimize it for validator activity.
 
 By default, ext4 will reserve 5% of its space for system processes.
@@ -85,7 +85,7 @@ $ sudo tune2fs -m 0 /dev/sda1
 There are other options in the [Advanced Configuration](Advanced-Configuration.ml) section if you want to further tune things, but this setup will work just fine.
 
 
-#### Mounting and Enabling Automount
+### Mounting and Enabling Automount
 
 In order to use the drive, you have to mount it to the file system.
 Create a new mount point anywhere you like (I'll use `/mnt/rpdata` here as an example, feel free to use that):
@@ -134,7 +134,7 @@ The SSD isn't nearly as fast as the regular RAM, so if it hits the swap space it
 Think of this as extra insurance that you'll (most likely) never need.
 
 
-#### Creating a Swap File
+### Creating a Swap File
 
 The first step is to make a new file that will act as your swap space.
 Decide how much you want to use - a reasonable start would be 8 GB, so you have 8 GB of normal RAM and 8 GB of "backup RAM" for a total of 16 GB.
@@ -192,7 +192,7 @@ Your output should look like this at the top:
 If you see a non-zero number in the last row labeled `Swp`, then you're all set.
 
 
-#### Configuring Swappiness and Cache Pressure
+### Configuring Swappiness and Cache Pressure
 
 By default, Linux will eagerly use a lot of swap space to take some of the pressure off of the system's RAM.
 We don't want that. We want it to use all of the RAM up to the very last second before relying on SWAP.
@@ -262,12 +262,13 @@ No Docker, no containers, just you, the clients, and Rocket Pool.
 The main advantages of doing this are:
 - Complete control over the configuration. You pick the user accounts, the permissions, the file system layout, the versions of everything... it's all up to you.
 - Easier to run custom / development versions of the ETH clients or Rocket Pool itself that you built from source.
+- Allows you to optimize and fine-tune things for even better performance.
 
 The disadvantages are:
 - A lot more effort to set up.
 - Requires more technical knowledge to really understand what you're doing when you follow each of the instructions.
   I suppose you could just follow them without understanding what they do, but that seems like a bad idea.
-- Not *officially* supported, so you'll have to head to the Rocket Pool Discord to ask for help. There's not nearly as much documentation to help you in case you break something.
+- Not *officially* supported, so there's not nearly as much documentation to help you in case you break something. You'll have to head to the Rocket Pool Discord to ask for help. 
 
 In my opinion, this configuration should only be used if you're a developer, if you want to run the absolute latest development prototypes for the clients or for Rocket Pool, or you just *really* don't like Docker.
 

@@ -9,7 +9,8 @@ If you're starting from scratch, then read on.
 ## What You'll Need
 
 These are the recommended components that you'll need to buy in order to run Rocket Pool on a Pi:
-- A **Raspberry Pi 4 Model B**, preferably the **8 GB model** (though for this setup, a 4 GB will work alright).
+- A **Raspberry Pi 4 Model B**, the **8 GB model**
+  - Note: while you *can* use a 4 GB with this setup, I strongly recommend you go with an 8 GB for peace of mind... it's really not much more expensive.
 - A **USB-C power supply** for the Pi. You want one that provides **at least 3 amps**.
 - A **MicroSD card**. It doesn't have to be big, 16 GB is plenty and they're pretty cheap now... but it should be at least a **Class 10 (U1)**.
 - A **MicroSD to USB** adapter for your PC. This is needed so you can install the Operating System onto the card before loading it into the Pi.
