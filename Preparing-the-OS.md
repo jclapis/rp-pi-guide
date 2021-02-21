@@ -1,4 +1,4 @@
-# Preparing the OS
+# Preparing Ubuntu for Rocket Pool
 
 Alright! You have a Pi all wired up, you have Ubuntu installed on your SD card, and you're ready to go.
 There are a few steps to take before installing to make sure that everything will run smoothly, so that's what we'll cover here.
@@ -124,6 +124,55 @@ Replace the value in `UUID=...` with the one from your disk, then press `Ctrl+O`
 Now the SSD will be automatically mounted when you reboot. Nice!
 
 
+### Testing the SSD's Performance
+
+Before going any further, you should test your SSD's read/write speed and how many I/O requests it can handle per second (IOPS).
+If your SSD is too slow, then it won't work well for a Rocket Pool node and you're going to end up losing money over time.
+
+To test it, we're going to use a program called `fio`. Install it like this:
+```
+$ sudo apt install fio
+```
+
+Next, move to your SSD's mount point:
+```
+$ cd /mnt/rpdata
+```
+
+Now, run this command to test the SSD performance:
+```
+$ fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=4G --readwrite=randrw --rwmixread=75
+```
+
+The output should look like this:
+```
+test: (g=0): rw=randrw, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
+fio-3.16
+Starting 1 process
+test: Laying out IO file (1 file / 4096MiB)
+Jobs: 1 (f=1): [m(1)][100.0%][r=63.9MiB/s,w=20.8MiB/s][r=16.4k,w=5329 IOPS][eta 00m:00s]
+test: (groupid=0, jobs=1): err= 0: pid=205075: Mon Feb 15 04:06:35 2021
+  read: IOPS=15.7k, BW=61.5MiB/s (64.5MB/s)(3070MiB/49937msec)
+   bw (  KiB/s): min=53288, max=66784, per=99.94%, avg=62912.34, stdev=2254.36, samples=99
+   iops        : min=13322, max=16696, avg=15728.08, stdev=563.59, samples=99
+  write: IOPS=5259, BW=20.5MiB/s (21.5MB/s)(1026MiB/49937msec); 0 zone resets
+...
+```
+
+What you care about are the lines starting with `read:` and `write:` under the `test:` line.
+- Your **read** should have IOPS of at least **15k** and bandwidth (BW) of at least **60 MiB/s**.
+- Your **write** should have IOPS of at least **5000** and bandwidth of at least **20 MiB/s**.
+
+Those are the specs from the Samsung T5 that I use, and I know it works just fine.
+I have a slower SSD with read IOPS of 5k and write IOPS of 1k, and it has a lot of problems keeping up with the ETH2 chain.
+If you use an SSD slower than the specs above, just be prepared that you might see a lot of missed attestations.
+If yours meets or exceeds them, then you're all set and can move on.
+
+Last but not least, remove the test file you just made:
+```
+$ rm /mnt/rpdata/test
+```
+
 ## Setting up Swap Space
 
 The Pi has 8 GB (or 4 GB if you went that route) of RAM. For our configuration, that will be plenty.
@@ -190,6 +239,8 @@ Your output should look like this at the top:
 ![](images/Swap.png)
 
 If you see a non-zero number in the last row labeled `Swp`, then you're all set.
+
+Press `q` or `F10` to quit out of `htop` and get back to the terminal.
 
 
 ### Configuring Swappiness and Cache Pressure
