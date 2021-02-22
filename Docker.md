@@ -8,11 +8,6 @@ This is the way Rocket Pool was originally meant to run, and it's the most suppo
 I had to build them myself, and had to modify the Rocket Pool installer to point to my images.
 If you don't trust me, my installer script, or those Docker images, then you should stop here and learn how to build all of that for yourself from source so you can guarantee that they're safe.**
 
-**ANOTHER NOTE:** This guide is going to have you install Nimbus as your ETH2 client.
-The version of Nimbus I built is from their `unstable` branch, because it includes [some fixes](https://github.com/status-im/nim-json-rpc/pull/94) I had to make in order to get it to work with Rocket Pool correctly.
-They haven't published an official version with these fixes yet, so the Nimbus image I built isn't a stable production release.
-Once they've published one, I'll switch to that instead.
-
 ## Installing Rocket Pool
 
 Okay, so as I said in the [Preparing Ubuntu for Rocket Pool](Preparing-the-OS.md) section, Docker is definitely the easiest way to use Rocket Pool.
@@ -222,7 +217,7 @@ $ rocketpool service logs eth1
 
 You should start seeing lots of lines that look like this:
 ```
-eth1_1        | INFO [02-21|05:25:55.310] Imported new block receipts              count=2048 elapsed=9.204s      number=1003853 hash="7c0afc…014aa7" age=1y7mo6d  size=2.75MiB
+eth1_1        | INFO [02-21|05:25:55.310] Imported new block receipts              count=2048 elapsed=9.204s      number=1003853 hash="7c0afcÂ…014aa7" age=1y7mo6d  size=2.75MiB
 eth1_1        | INFO [02-21|05:25:57.596] Imported new state entries               count=0    elapsed=2.579s      processed=4208370 pending=8305  trieretry=39  coderetry=0  duplicate=0 unexpected=40787
 ```
 
