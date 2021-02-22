@@ -120,7 +120,7 @@ LABEL=system-boot       /boot/firmware  vfat    defaults        0       1
 UUID=1ade40fd-1ea4-4c6e-99ea-ebb804d86266       /mnt/rpdata     ext4    defaults        0       0
 ```
 
-Replace the value in `UUID=...` with the one from your disk, then press `Ctrl+O` to save, and `Ctrl+X` to exit.
+Replace the value in `UUID=...` with the one from your disk, then press `Ctrl+O` and `Enter` to save, then `Ctrl+X` and `Enter` to exit.
 Now the SSD will be automatically mounted when you reboot. Nice!
 
 
@@ -141,7 +141,7 @@ $ cd /mnt/rpdata
 
 Now, run this command to test the SSD performance:
 ```
-$ fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=4G --readwrite=randrw --rwmixread=75
+$ sudo fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=4G --readwrite=randrw --rwmixread=75
 ```
 
 The output should look like this:
@@ -170,7 +170,7 @@ If yours meets or exceeds them, then you're all set and can move on.
 
 Last but not least, remove the test file you just made:
 ```
-$ rm /mnt/rpdata/test
+$ sudo rm /mnt/rpdata/test
 ```
 
 ## Setting up Swap Space
@@ -227,7 +227,7 @@ UUID=1ade40fd-1ea4-4c6e-99ea-ebb804d86266       /mnt/rpdata     ext4    defaults
 /mnt/rpdata/swapfile                            none            swap    sw              0       0
 ```
 
-Press `Ctrl+O` to save and `Ctrl+X` to exit.
+Press `Ctrl+O` and `Enter` to save, then `Ctrl+X` and `Enter` to exit.
 
 To verify that it's active, run these commands:
 ```
