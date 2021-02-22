@@ -317,7 +317,7 @@ WantedBy=multi-user.target
 
 Some notes:
 - The user is set to `eth2`.
-- Nimbus is preceeded by `taskset 0x01`. Basically, this constrains Geth to only run on CPU 0 (since it's single threaded).
+- Nimbus is preceeded by `taskset 0x01`. Basically, this constrains Nimbus to only run on CPU 0 (since it's single threaded).
   See the Geth notes for the rationale here.
 - Change the `--graffiti` to whatever you want.
 
