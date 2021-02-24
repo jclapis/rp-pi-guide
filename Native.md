@@ -27,12 +27,12 @@ For this reason, I set up these users as system accounts without a shell so nobo
 
 Start by creating an account for Geth, which I'll call `eth1`:
 ```
-$ sudo adduser -r -s /sbin/nologin eth1
+$ sudo useradd -r -s /sbin/nologin eth1
 ```
 
 Do the same for Nimbus and Rocket Pool, which I'll call `eth2`:
 ```
-$ sudo adduser -r -s /sbin/nologin eth2
+$ sudo useradd -r -s /sbin/nologin eth2
 ```
 
 Finally, add yourself to the `eth2` group.
