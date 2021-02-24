@@ -288,7 +288,7 @@ Now go grab [the latest Nimbus ARM64 binary](https://github.com/status-im/nimbus
 If you get the prebuilt binary, **make sure you pick the `arm64v8` one!** For example:
 ```
 $ cd /tmp
-$ wget https://github.com/status-im/nimbus-eth2/releases/download/v1.0.7/nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
+$ wget https://github.com/status-im/nimbus-eth2/releases/download/v1.0.8/nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
 $ tar xzf nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
 $ cp nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393/build/nimbus_beacon_node /srv/nimbus/nimbus
 ```
