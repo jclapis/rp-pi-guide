@@ -1,3 +1,13 @@
+## *Navigation*
+- [Overview](Overview.md)
+- [Preliminary Setup](Preliminary-Setup.md)
+- **Preparing the OS**
+  - [Installing Rocket Pool with Docker](Docker.md)
+  - [Installing Rocket Pool Natively](Native.md)
+- [Overclocking the Pi](Overclocking.md)
+- [Setting up a Grafana Dashboard](Grafana.md)
+
+
 # Preparing Ubuntu for Rocket Pool
 
 Alright! You have a Pi all wired up, you have Ubuntu installed on your SD card, and you're ready to go.
@@ -81,8 +91,6 @@ Since we don't need that on the SSD because it just stores the ETH1 and ETH2 cha
 ```
 $ sudo tune2fs -m 0 /dev/sda1
 ```
-
-There are other options in the [Advanced Configuration](Advanced-Configuration.ml) section if you want to further tune things, but this setup will work just fine.
 
 
 ### Mounting and Enabling Automount

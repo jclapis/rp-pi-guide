@@ -1,3 +1,13 @@
+## *Navigation*
+- [Overview](Overview.md)
+- **Preliminary Setup**
+- [Preparing the OS](Preparing-the-OS.md)
+  - [Installing Rocket Pool with Docker](Docker.md)
+  - [Installing Rocket Pool Natively](Native.md)
+- [Overclocking the Pi](Overclocking.md)
+- [Setting up a Grafana Dashboard](Grafana.md)
+
+
 # Preliminary Setup
 
 To run a Rocket Pool node on a Raspberry Pi, you'll need to first have a working Raspberry Pi. 

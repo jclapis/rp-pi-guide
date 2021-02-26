@@ -1,3 +1,13 @@
+## *Navigation*
+- [Overview](Overview.md)
+- [Preliminary Setup](Preliminary-Setup.md)
+- [Preparing the OS](Preparing-the-OS.md)
+  - **Installing Rocket Pool with Docker**
+  - [Installing Rocket Pool Natively](Native.md)
+- [Overclocking the Pi](Overclocking.md)
+- [Setting up a Grafana Dashboard](Grafana.md)
+
+
 # Running Rocket Pool with Docker
 
 You've made it! You have a Pi, it's all set up, and you're ready to finally install Rocket Pool.
