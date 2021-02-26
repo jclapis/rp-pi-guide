@@ -37,12 +37,12 @@ For this reason, I set up these users as system accounts without a shell so nobo
 
 Start by creating an account for Geth, which I'll call `eth1`:
 ```
-$ sudo adduser -r -s /sbin/nologin eth1
+$ sudo useradd -r -s /sbin/nologin eth1
 ```
 
 Do the same for Nimbus and Rocket Pool, which I'll call `eth2`:
 ```
-$ sudo adduser -r -s /sbin/nologin eth2
+$ sudo useradd -r -s /sbin/nologin eth2
 ```
 
 Finally, add yourself to the `eth2` group.
@@ -298,7 +298,7 @@ Now go grab [the latest Nimbus ARM64 binary](https://github.com/status-im/nimbus
 If you get the prebuilt binary, **make sure you pick the `arm64v8` one!** For example:
 ```
 $ cd /tmp
-$ wget https://github.com/status-im/nimbus-eth2/releases/download/v1.0.7/nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
+$ wget https://github.com/status-im/nimbus-eth2/releases/download/v1.0.8/nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
 $ tar xzf nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
 $ cp nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393/build/nimbus_beacon_node /srv/nimbus/nimbus
 ```
@@ -327,7 +327,7 @@ WantedBy=multi-user.target
 
 Some notes:
 - The user is set to `eth2`.
-- Nimbus is preceeded by `taskset 0x01`. Basically, this constrains Geth to only run on CPU 0 (since it's single threaded).
+- Nimbus is preceeded by `taskset 0x01`. Basically, this constrains Nimbus to only run on CPU 0 (since it's single threaded).
   See the Geth notes for the rationale here.
 - Change the `--graffiti` to whatever you want.
 

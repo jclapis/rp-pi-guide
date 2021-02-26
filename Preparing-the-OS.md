@@ -106,7 +106,7 @@ Now, mount the new SSD partition to that folder:
 $ sudo mount /dev/sda1 /mnt/rpdata
 ```
 
-After this, the folder `/srv/rpdata` will point to the SSD, so anything you write to that folder will live on the SSD.
+After this, the folder `/mnt/rpdata` will point to the SSD, so anything you write to that folder will live on the SSD.
 This is where we're going to store the chain data for ETH1 and ETH2.
 
 Now, let's add it to the mounting table so it automatically mounts on startup.
