@@ -5,7 +5,7 @@
   - [Installing Rocket Pool with Docker](Docker.md)
   - [Installing Rocket Pool Natively](Native.md)
 - **Overclocking the Pi**
-- [Setting up a Grafana Dashboard](Grafana.md)
+- [Setting Up a Grafana Dashboard](Grafana.md)
 
 
 # Overclocking the Pi

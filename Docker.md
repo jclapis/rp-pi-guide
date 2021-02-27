@@ -5,7 +5,7 @@
   - **Installing Rocket Pool with Docker**
   - [Installing Rocket Pool Natively](Native.md)
 - [Overclocking the Pi](Overclocking.md)
-- [Setting up a Grafana Dashboard](Grafana.md)
+- [Setting Up a Grafana Dashboard](Grafana.md)
 
 
 # Running Rocket Pool with Docker
@@ -227,7 +227,8 @@ $ rocketpool service logs eth1
 
 You should start seeing lots of lines that look like this:
 ```
-eth1_1        | INFO [02-21|05:25:55.310] Imported new block receipts              count=2048 elapsed=9.204s      number=1003853 hash="7c0afc014aa7" age=1y7mo6d  size=2.75MiB
+eth1_1        | INFO [02-21|05:25:55.310] Imported new block receipts              count=2048 elapsed=9.204s      number=1003853 hash="7c0afc
+014aa7" age=1y7mo6d  size=2.75MiB
 eth1_1        | INFO [02-21|05:25:57.596] Imported new state entries               count=0    elapsed=2.579s      processed=4208370 pending=8305  trieretry=39  coderetry=0  duplicate=0 unexpected=40787
 ```
 
