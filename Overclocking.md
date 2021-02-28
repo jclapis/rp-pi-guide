@@ -14,6 +14,7 @@ By default, the 1.5 GHz processor that the Pi comes with is a pretty capable lit
 For the most part, you should be able to validate with it just fine.
 However, I have noticed that on rare occasions, Nimbus gets stuck working on some things and it just doesn't have enough horsepower to keep up with your validator's attestation duties.
 When that happens, you'll see something like this on beaconcha.in:
+
 ![](images/Incl-Dist.png)
 
 That inclusion distance of 8 means that Nimbus took a really long time to send that attestation, and you're going to get penalized for being late.
@@ -109,8 +110,14 @@ Let's call this the **stock KFLOPS**.
 ### Temperature
 
 Next, let's stress the Pi out and watch its temperature under heavy load.
-To do this, we're going to use a program called **stressberry**.
+First, install this package, which will provide a tool called `vcgencmd` that can print details about the Pi:
+```
+$ sudo apt install libraspberrypi-bin
+```
 
+Once this is installed, reboot the Pi (this is necessary for some new permission to get applied).
+Next, install a program called **stressberry**.
+This will be our benchmarking tool.
 Install it like this:
 ```
 $ sudo apt install stress
@@ -130,23 +137,20 @@ The results will get saved to a file named `stock.out`.
 During the main phase of the test, the output will look like this:
 
 ```
-Current temperature: 41.3°C - Frequency: 1500MHz
-Current temperature: 41.3°C - Frequency: 1500MHz
-Current temperature: 41.8°C - Frequency: 1500MHz
-Current temperature: 40.9°C - Frequency: 1500MHz
-Current temperature: 41.8°C - Frequency: 1500MHz
+Current temperature: 41.3Â°C - Frequency: 1500MHz
+Current temperature: 41.3Â°C - Frequency: 1500MHz
+Current temperature: 41.8Â°C - Frequency: 1500MHz
+Current temperature: 40.9Â°C - Frequency: 1500MHz
+Current temperature: 41.8Â°C - Frequency: 1500MHz
 ```
 
 This basically tells you how hot the Pi will get.
-At 85­°C, the Pi will actually start to throttle itself and bring the clock speed down so it doesn't overheat.
+At 85Â­Â°C, the Pi will actually start to throttle itself and bring the clock speed down so it doesn't overheat.
 Luckily, because you added a heatsink and a fan, you shouldn't get anywhere close to this!
-That being said, I generally try to keep my temperatures below 65°C for the sake of the system's overall health.
+That being said, I generally try to keep my temperatures below 65Â°C for the sake of the system's overall health.
 
 If you want to monitor the system temperature during normal validating operations, you can do this with `vcgencmd`:
-
 ```
-$ sudo apt install libraspberrypi-bin
-...
 $ vcgencmd measure_temp
 temp=34.0'C
 ```
@@ -242,14 +246,14 @@ $ stressberry-run -n "1800_ov3" -d 300 -i 60 -c 4 1800_ov3.out
 
 You should see output like this:
 ```
-Current temperature: 47.2°C - Frequency: 1800MHz
-Current temperature: 48.7°C - Frequency: 1800MHz
-Current temperature: 47.7°C - Frequency: 1800MHz
-Current temperature: 47.7°C - Frequency: 1800MHz
-Current temperature: 47.7°C - Frequency: 1800MHz
+Current temperature: 47.2Â°C - Frequency: 1800MHz
+Current temperature: 48.7Â°C - Frequency: 1800MHz
+Current temperature: 47.7Â°C - Frequency: 1800MHz
+Current temperature: 47.7Â°C - Frequency: 1800MHz
+Current temperature: 47.7Â°C - Frequency: 1800MHz
 ```
 
-Not bad, about 6° hotter than the stock settings but still well below the threshold where I'd personally stop.
+Not bad, about 6Â° hotter than the stock settings but still well below the threshold where I'd personally stop.
 
 You can run a longer stability test here if you're comfortable, or you can press on to take things even higher.
 
@@ -297,14 +301,14 @@ That's a 32.3% speedup which is in-line with what we'd expect. Not bad!
 
 Here are my temperatures:
 ```
-Current temperature: 54.0°C - Frequency: 2000MHz
-Current temperature: 54.5°C - Frequency: 2000MHz
-Current temperature: 54.0°C - Frequency: 2000MHz
-Current temperature: 54.5°C - Frequency: 2000MHz
-Current temperature: 55.5°C - Frequency: 2000MHz
+Current temperature: 54.0Â°C - Frequency: 2000MHz
+Current temperature: 54.5Â°C - Frequency: 2000MHz
+Current temperature: 54.0Â°C - Frequency: 2000MHz
+Current temperature: 54.5Â°C - Frequency: 2000MHz
+Current temperature: 55.5Â°C - Frequency: 2000MHz
 ```
 
-An increase of 7 more degrees, but still under my threshold of 65°C.
+An increase of 7 more degrees, but still under my threshold of 65Â°C.
 
 
 ## Going to 2100 MHz (Heavy)
@@ -341,12 +345,12 @@ That's a 39.4% speedup!
 
 Here are my temperatures:
 ```
-Current temperature: 59.4°C - Frequency: 2100MHz
-Current temperature: 58.9°C - Frequency: 2100MHz
-Current temperature: 58.4°C - Frequency: 2100MHz
-Current temperature: 59.4°C - Frequency: 2100MHz
-Current temperature: 58.9°C - Frequency: 2100MHz
+Current temperature: 59.4Â°C - Frequency: 2100MHz
+Current temperature: 58.9Â°C - Frequency: 2100MHz
+Current temperature: 58.4Â°C - Frequency: 2100MHz
+Current temperature: 59.4Â°C - Frequency: 2100MHz
+Current temperature: 58.9Â°C - Frequency: 2100MHz
 ```
 
-Just shy of 60°C, so there's plenty of room.
+Just shy of 60Â°C, so there's plenty of room.
 I'm happy with this performance and temperature range, so this is what I run.
