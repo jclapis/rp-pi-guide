@@ -61,7 +61,7 @@ $ sudo mv /srv/nimbus/nimbus /srv/nimbus/nimbus_old
 $ sudo mv build/nimbus_beacon_node /srv/nimbus/nimbus
 ```
 
-The file `/srv/nimbus/nimbus_old` is a backup of the old client, so you can always restore it if something goes wrong._
+The file `/srv/nimbus/nimbus_old` is a backup of the old client, so you can always restore it if something goes wrong.
 
 Now, open `/etc/systemd/system/nimbus.service` with an editor and add these arguments to the `ExecStart` line:
 ```
