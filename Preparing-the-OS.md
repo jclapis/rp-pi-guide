@@ -1,3 +1,8 @@
+# Setting up Rocket Pool on a Raspberry Pi
+### Guide v2.0 - for RP Beta 3.0
+
+![](images/Logo-small.png)
+
 ## *Navigation*
 - [Overview](Overview.md)
 - [Preliminary Setup](Preliminary-Setup.md)
@@ -302,10 +307,12 @@ All you need to do is choose which clients you want to use, and press go!
 
 It's also possible to use your own ETH1 and/or ETH2 clients outside of Docker if you already have them, and point Rocket Pool at those.
 
-However, it does come with one downside (sort of).
-None of the vendors for ETH1 and ETH2 clients produce official Docker containers that support the Raspberry Pi's ARM64 processor.
-That means the Rocket Pool has to build them from scratch and upload them manually each time there's a new version of a client.
-Sometimes this might take a while. Either way, you have to trust the images that Rocket Pool team produce.
+However, it does come with one downside.
+Very few vendors for ETH1 and ETH2 clients produce official Docker containers that support the Raspberry Pi's ARM64 processor.
+That means I have to build them from scratch and upload them manually each time there's a new version of a client.
+Sometimes this might take a while.
+
+Either way, **you have to trust the images that I produce. If you don't want to trust them and want to build them yourself, you'll need to learn how to build your own Docker images.**
 
 That being said, **for most people, this is the configuration you should take.** It is by far the easiest to use.
 
@@ -321,7 +328,7 @@ No Docker, no containers, just you, the clients, and Rocket Pool.
 The main advantages of doing this are:
 - Complete control over the configuration. You pick the user accounts, the permissions, the file system layout, the versions of everything... it's all up to you.
 - Easier to run custom / development versions of the ETH clients or Rocket Pool itself that you built from source.
-- Allows you to optimize and fine-tune things for even better performance.
+- Allows you to optimize and fine-tune things for *maximum performance*.
 
 The disadvantages are:
 - A lot more effort to set up.
@@ -329,6 +336,6 @@ The disadvantages are:
   I suppose you could just follow them without understanding what they do, but that seems like a bad idea.
 - Not *officially* supported, so there's not nearly as much documentation to help you in case you break something. You'll have to head to the Rocket Pool Discord to ask for help. 
 
-In my opinion, this configuration should only be used if you're a developer, if you want to run the absolute latest development prototypes for the clients or for Rocket Pool, or you just *really* don't like Docker.
+In my opinion, this configuration should only be used if you're a developer, if you want to run the absolute latest development prototypes for the clients or for Rocket Pool, you want to squeeze every possible iota of performance out of your Pi to have the best attestation rates, or you just *really* don't like Docker.
 
 If you want to use the Native configuration, move to the [Setting up Rocket Pool Natively](Native.md) page.

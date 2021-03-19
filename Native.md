@@ -1,3 +1,8 @@
+# Setting up Rocket Pool on a Raspberry Pi
+### Guide v2.0 - for RP Beta 3.0
+
+![](images/Logo-small.png)
+
 ## *Navigation*
 - [Overview](Overview.md)
 - [Preliminary Setup](Preliminary-Setup.md)
@@ -20,6 +25,10 @@ I'm not going to explain every little command and detail here because there's ju
 In general, what you're going to do is install Geth, install Nimbus, install the Rocket Pool daemon, and create `systemd` services for all of them.
 Then you'll add the Rocket Pool CLI to interact with everything like you normally would with a Docker-based setup.
 The only difference is the `rocketpool service xxx` commands won't work, but we'll build our own versions of them.
+
+**NOTE: 
+You can use a different ETH 2.0 client if you really want to, but in my testing, Nimbus has been the top performer with respect to RAM consumption and stability on low-power systems like the Pi.
+I'm going to assume that you're using it throughout the rest of the guide - if not, substitute for your ETH2 client appropriately.**
 
 *This guide was inspired by the official "[Running the Rocket Pool Service Outside Docker](https://rocket-pool.readthedocs.io/en/latest/smart-node/non-docker.html)" guide by Jake Pospischil*.
 
@@ -48,7 +57,7 @@ $ sudo useradd -r -s /sbin/nologin eth2
 Finally, add yourself to the `eth2` group.
 You'll need to do this in order to use the Rocket Pool CLI, because it and the Rocket Pool daemon both need to access the ETH1 wallet file.
 ```
-$ sudo usermod -a -G eth2 ubuntu
+$ sudo usermod -aG eth2 ubuntu
 ```
 
 After this, logout and back in for the changes to take effect.

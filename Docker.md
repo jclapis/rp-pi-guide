@@ -1,3 +1,8 @@
+# Setting up Rocket Pool on a Raspberry Pi
+### Guide v2.0 - for RP Beta 3.0
+
+![](images/Logo-small.png)
+
 ## *Navigation*
 - [Overview](Overview.md)
 - [Preliminary Setup](Preliminary-Setup.md)
@@ -14,8 +19,8 @@ You've made it! You have a Pi, it's all set up, and you're ready to finally inst
 This guide is going to show you how to do it the "easy" way, using Docker.
 This is the way Rocket Pool was originally meant to run, and it's the most supported configuration.
 
-**NOTE: With all of that said, none of the ETH2 client vendors provide Docker images for ARM.
-I had to build them myself, and had to modify the Rocket Pool installer to point to my images.
+**NOTE: With all of that said, the only client that has an official Docker image for ARM is Lighthouse.
+I had to build the rest of them myself, and had to modify the Rocket Pool installer to point to my images.
 If you don't trust me, my installer script, or those Docker images, then you should stop here and learn how to build all of that for yourself from source so you can guarantee that they're safe.**
 
 ## Installing Rocket Pool
@@ -32,19 +37,25 @@ Go to your home directory:
 $ cd ~
 ```
 
-Download my installer script:
+Download the Rocket Pool application:
 ```
-$ wget https://github.com/jclapis/smartnode-install/releases/download/v0.0.9-j1/install-arm64.sh
+$ mkdir -p ~/bin
+$ wget https://github.com/jclapis/smartnode-install/releases/latest/download/rocketpool-cli-linux-arm64 -O ~/bin/rocketpool
+```
+
+Download the installer script:
+```
+$ wget https://github.com/jclapis/smartnode-install/releases/latest/download/install.sh
 ```
 
 Make it executable, so you can run it:
 ```
-$ chmod +x install-arm64.sh
+$ chmod +x install.sh
 ```
 
 Finally, run it:
 ```
-$ ./install-arm64.sh
+$ ./install.sh
 ```
 
 This is going to install a bunch of necessary things for you, like Docker and Docker Compose.
@@ -53,18 +64,22 @@ Lastly, it will download the Rocket Pool command line interface (CLI), which is 
 
 The last few steps should look like this:
 ```
-Step 4 of 8: Adding user to docker group...
-Step 5 of 8: Creating Rocket Pool user data directory...
-Step 6 of 8: Downloading Rocket Pool package files...
+Step 4 of 7: Adding user to docker group...
+Step 5 of 7: Creating Rocket Pool user data directory...
+Step 6 of 7: Downloading Rocket Pool package files...
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   651  100   651    0     0   3271      0 --:--:-- --:--:-- --:--:--  3271
 100 7845k  100 7845k    0     0  5689k      0  0:00:01  0:00:01 --:--:-- 10.2M
-Step 7 of 8: Copying package files to Rocket Pool user data directory...
-Step 8 of 8: Installing Rocket Pool CLI...
+Step 7 of 7: Copying package files to Rocket Pool user data directory...
 ```
 
 It will take a while, but if all of those steps complete without throwing any errors, then Rocket Pool will be installed.
+
+Now you can remove the installer script:
+```
+$ rm install.sh
+```
 
 The last thing to do, and **this is important**, is you need to *log out* if you're using a desktop UI, or *exit* if you're using SSH.
 You need to do this in order to be able to use Docker properly, because it set some permissions on your user account that won't apply until you log out and log back in / start a new session.
@@ -107,20 +122,17 @@ n
 ```
 
 Next you'll be presented with your choice of the ETH 2.0 clients.
-**This is very important. I've done a bunch of testing with each of them, and I strongly, STRONGLY recommend that you use Nimbus for Raspberry Pi setups.**
-Nimbus uses about **1/10th the RAM** of the other clients which makes it ideal for our little computer.
-It also comes with **doppelganger protection**, which means it will check the network to see if your validator is already in use - if it is, it won't do any more attestations.
-In other words, you won't get slashed for running two nodes with the same keys. Nice!
+After having done lots of testing on my Raspberry Pi, I can confidently say that **Nimbus** has given me the best results.
+It's designed specifically for low-power systems like this; it uses the least amount of RAM by far (about 700 to 800 MB).
+It also comes with **doppelganger protection**, which checks to see if your validators are already in use elsewhere and ignores them if so, so you don't get slashed! Nice!
 
-Anyway, when you are asked which ETH 2.0 client to use, press `4` for Nimbus.
+You should do your own research here to decide which ETH 2.0 client you like the most, but I am going to assume that you picked Nimbus for the rest of this guide. If not, just tailor it to your client accordingly.
 
-After that, you'll be asked for some custom graffiti.
+After you pick your client, you'll be asked for some custom graffiti.
 This is a short message that will be added to any blocks you propose, for the whole world to see.
 Pick something fun or something personal to you.
 I set mine to `Made on a RPi 4!`, as you can see below:
 ```
-4
-
 Nimbus Eth 2.0 client selected.
 
 Please enter the Custom Graffiti (leave blank for none)
@@ -141,10 +153,41 @@ Done! Run 'rocketpool service start' to apply new configuration settings.
 
 ### Configuring Geth
 
-The first thing to do is change some of the properties that Geth launches with.
 By default, it will use a lot of RAM and connect to a lot of peers.
 We don't want either of those things - we want low RAM because, well, we're on a Pi.
 We don't want a lot of peers because we're not going to do a whole lot with ETH1, and don't need to waste the extra connections.
+I've made some adjustments to it already (included in the installer script), but now is a good time to do some extra tweaking if you want to.
+
+#### Cache Size
+
+Geth defaults to taking something like 4 GB of RAM for its cache.
+That's too much for us.
+Luckily, there is a simple command line flag you can add that will lower it and use less RAM.
+
+**For 4 GB Pis, I suggest you use 256.**
+This will make sure Geth only uses 256 MB of RAM for its cache.
+
+**For 8 GB Pis, you can safely use 512** or possibly even **768** if you're feeling adventurous.
+I wouldn't go any higher than that.
+
+I set it to **256** in the script by default, so if you're running an 8 GB Pi, you may want to go higher.
+Using 256 won't really hurt anything, it will just make syncing take longer.
+
+#### Number of Peers
+
+The number of peers determines how many other ETH1 nodes you connect to.
+This matters because more peers means you have faster access to the most up-to-date state of the blockchain.
+However, it also means more CPU and network I/O is spent updating ETH1.
+
+By default, Geth uses **50** peers as its maximum.
+This is pretty unnecessary for us, since we just need ETH1 when we get a chance at proposing blocks.
+
+Because of that, I recommend lowering this to **24** while syncing the ETH1 chain, and then down to **12** once you've finished syncing.
+
+The default in my script is **24**.
+
+#### Setting the New Numbers
+
 
 Run `nano` on the ETH1 launch script to edit it, like you edited `/etc/fstab` in the previous section:
 ```
@@ -153,15 +196,14 @@ $ nano ~/.rocketpool/chains/eth1/start-node.sh
 
 This is the script that controls what command line arguments Geth will get launched with.
 
-Change the `CMD=...` string on line 8 by adding the `--cache 256` and `--maxpeers 24` arguments right after `/usr/local/bin/geth`.
-The former will make Geth use way less RAM than it normally does.
-The latter will limit Geth to 24 peers. The default is 50, and you can set this to a higher or lower number if you want, but 24 works for me.
-
-The final string should look like this (where the `...` just means there's more stuff afterwards):
+To make your changes, modify the `CMD=...` string on line 8. 
+It starts like this:
 
 ```
-    CMD="/usr/local/bin/geth --cache 256 --maxpeers 24 --goerli --datadir /ethclient/geth ...
+CMD="/usr/local/bin/geth --goerli --cache 256 --maxpeers 24
 ```
+
+Change the number after `--cache` if you want to change the cache size, and change the number after `--maxpeers` if you want to change the maximum peer count.
 
 Once that's done, save it with `Ctrl+O` and exit with `Ctrl+X`.
 
@@ -274,7 +316,7 @@ Once you're back, let's talk about how to actually use Rocket Pool and monitor h
 
 ### Setting up a Validator
 
-With respect to using it, Rocket Pool developer Jake Pospischil has written up [a wonderful guide on exactly this](https://medium.com/rocket-pool/rocket-pool-v2-5-beta-node-operators-guide-77859891766b) already.
+With respect to using it, Rocket Pool developer Jake Pospischil has written up [a wonderful guide on exactly this](https://medium.com/rocket-pool/rocket-pool-v2-5-beta-node-operators-guide-77859891766b) already *(yes, the URL says it's for Beta 2.5, but that's just an issue with Medium's cache - this is the guide for Beta 3.0, I promise)*.
 It also covers installing Rocket Pool, but that's for boring old normal computers... you already did that whole process!
 Anyway, to learn how to use Rocket Pool for validating on ETH2, take a look at the guide linked above and skip about halfway down the page, to the section labeled **Registering Your Node**.
 That will walk you through the ins-and-outs of how to create a validator with Rocket Pool.
@@ -349,3 +391,51 @@ If everything is set up right, you should see something like this:
 All of the attestations should say `Attested` for their **Status**, and ideally all of the **Opt. Incl. Dist.** should be 0 (though an occasional 1 or 2 is fine).
 
 And that's all there is to it! Congratulations again, and enjoy validating with your Raspberry Pi!
+
+
+
+### Updating Rocket Pool to New Releases
+
+Periodically, you'll see new releases of Rocket Pool come out.
+I'll do my best to keep my ARM releases up to date for the Pi.
+When you want to upgrade, first check this page to see if I've released a new version:
+
+https://github.com/jclapis/smartnode-install/releases
+
+If you see one that looks recent and references the new version of Rocket Pool, grabbing it just involves repeating the same steps you did when you first installed it.
+
+Download the new Rocket Pool application:
+```
+$ cd ~
+$ wget https://github.com/jclapis/smartnode-install/releases/latest/download/rocketpool-cli-linux-arm64 -O ~/bin/rocketpool
+```
+
+Download the new installer script:
+```
+$ wget https://github.com/jclapis/smartnode-install/releases/latest/download/install.sh
+```
+
+Make it executable, so you can run it:
+```
+$ chmod +x install.sh
+```
+
+Run it:
+```
+$ ./install.sh
+```
+
+Finally, remove it:
+```
+$ rm install.sh
+```
+
+All done! You can check the version of everything with:
+```
+$ rocketpool service version
+
+Rocket Pool client version: 1.0.0-beta.0
+Rocket Pool service version: 1.0.0-beta.0
+```
+
+Both the client and service should match the new release version.

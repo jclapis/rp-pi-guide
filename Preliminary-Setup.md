@@ -1,3 +1,8 @@
+# Setting up Rocket Pool on a Raspberry Pi
+### Guide v2.0 - for RP Beta 3.0
+
+![](images/Logo-small.png)
+
 ## *Navigation*
 - [Overview](Overview.md)
 - **Preliminary Setup**
@@ -28,8 +33,15 @@ These are the recommended components that you'll need to buy in order to run Roc
 - Some **heatsinks**. You're going to be running the Pi under heavy load 24/7, and it's going to get hot.
   Heatsinks will help so it doesn't throttle itself. You ideally want a set of 3: one for the CPU, one for the RAM, and one for the USB controller.
   [Here is a good example of a nice set](https://www.canakit.com/raspberry-pi-4-heat-sinks.html).
-- A 40mm **fan**. Same as the above, the goal is to keep things cool while running your Rocket Pool node.
-- A **case with a fan mount** to tie it all together. Note that if you get [a heatsink case like this](https://www.amazon.com/Raspberry-Armor-Metal-Aluminium-Heatsink/dp/B07VWM4J4L), you won't need to get the heatsinks and fan separately.
+- A **case**. There are two ways to go here: with a fan, and fanless.
+  - With a fan:
+    - A 40mm **fan**. Same as the above, the goal is to keep things cool while running your Rocket Pool node.
+    - A **case with a fan mount** to tie it all together.
+      You could also get a case with integrated fans [like this one](https://www.amazon.com/Raspberry-Armor-Metal-Aluminium-Heatsink/dp/B07VWM4J4L) so you don't have to buy the fans separately.
+  - Without a fan:
+    - A **fanless case** that acts as one giant heatsink, like [this one](https://www.amazon.com/Akasa-RA08-M1B-Raspberry-case-Aluminium/dp/B081VYVNTX).
+      I don't know how the system temperatures compare to a fanned case, but this is a nice option since it's silent.
+      Credit to Discord user Ken for pointing me in this direction!
 
 
 You can get a lot of this stuff bundled together for convenience - for example, [Canakit offers a kit](https://www.amazon.com/CanaKit-Raspberry-8GB-Starter-Kit/dp/B08956GVXN) with many components included.
@@ -53,7 +65,7 @@ Depending on your location, sales, your choice of SSD and UPS, and how many of t
 
 When you get the fan, by default you're probably going to be instructed to connect it to the 5v GPIO pin, as shown in the picture below.
 The fan will have a connector with two holes; the black one should go to GND (pin 6), and the red one should go to +5v (pin 4).
-![hi](images/Pinout.png)
+![](images/Pinout.png)
 
 However, in my experience, this makes the fan run very loud and fast which isn't really necessary.
 If you want to make it more quiet while still running cool, try connecting it to the 3.3v pin (Pin 1, the blue one) instead of the 5v pin.
