@@ -11,6 +11,7 @@
   - **Installing Rocket Pool Natively**
 - [Overclocking the Pi](Overclocking.md)
 - [Setting Up a Grafana Dashboard](Grafana.md)
+- [Securing and Maintaining your Node](Security.md)
 
 
 # Running Rocket Pool Natively
@@ -66,43 +67,48 @@ After this, logout and back in for the changes to take effect.
 ## Installing Rocket Pool
 
 ### Setting up the Binaries
-Start by making a folder for Rocket Pool's configuration:
+Start by making a folder for Rocket Pool and a data subfolder:
 ```
-$ sudo mkdir /srv/rocketpool
+$ sudo mkdir -p /srv/rocketpool/data
 $ sudo chown ubuntu:ubuntu /srv/rocketpool
 ```
 
-Now download the latest `config.yml` from the smartnode installer.
-Use [my version](https://raw.githubusercontent.com/jclapis/smartnode-install/nimbus-support/rp-smartnode-install/network/pyrmont/config.yml) for now until Nimbus support is officially added to Rocket Pool.
-```
-$ cd /srv/rocketpool
-$ wget https://raw.githubusercontent.com/jclapis/smartnode-install/nimbus-support/rp-smartnode-install/network/pyrmont/config.yml
+Now, grab the CLI and daemon binaries.
+You can pull my pre-built ones (instructions below), or [build them from source](https://rocket-pool.readthedocs.io/en/latest/smart-node/non-docker.html) **(only follow steps 1-4)**.
+To grab my pre-built binaries and flag them as executable:
+```shell
+$ sudo wget https://github.com/jclapis/smartnode-install/releases/latest/download/rocketpool-cli-linux-arm64 -O /usr/local/bin/rocketpool
+$ sudo wget https://github.com/jclapis/smartnode-install/releases/latest/download/rocketpool-daemon-linux-arm64 -O /usr/local/bin/rocketpoold
+$ sudo chmod +x /usr/local/bin/rocketpool /usr/local/bin/rocketpoold
 ```
 
-Open it in nano or your editor of choice, and make the following changes:
+Next, grab the installation package - we're going to throw almost everything in here away since it's meant to support docker installs, but we need to copy two files:
+1. The config file that Rocket Pool uses to understand the directories and routes for everything
+2. The script that lets Rocket Pool restart the validator service once a new minipool is created (so it can load the new keys)
+
+Follow these steps:
+```shell
+$ cd /tmp
+$ wget https://github.com/jclapis/smartnode-install/releases/latest/download/rp-smartnode-install-arm64.tar.xz
+$ tar xf rp-smartnode-install-arm64.tar.xz
+$ cp rp-smartnode-install/network/pyrmont/config.yml /srv/rocketpool
+$ cp rp-smartnode-install/network/pyrmont/chains/eth2/restart-validator.sh /srv/rocketpool
+$ cd /srv/rocketpool
+```
+
+Now, open `config.yml` in nano or your editor of choice, and make the following changes:
 - Change `smartnode.passwordPath` to `passwordPath: /srv/rocketpool/data/password`
 - Change `smartnode.walletPath` to `walletPath: /srv/rocketpool/data/wallet`
 - Change `smartnode.validatorKeychainPath` to `validatorKeychainPath: /srv/rocketpool/data/validators`
+- Change `smartnode.validatorRestartCommand` to `validatorRestartCommand: "/srv/rocketpool/restart-validator.sh"`
 - Change `chains.eth1.provider` to `provider: http://127.0.0.1:8545`
+- Change `chains.eth1.wsProvider` to `provider: ws://127.0.0.1:8546`
 - Change `chains.eth2.provider` to `provider: 127.0.0.1:5052` (note the lack of http:// at the front, this is on purpose)
 
-Make the other necessary stuff:
-```
-$ touch settings.yml
-$ mkdir data
-```
+Next, modify `restart-validator.sh`:
+- Uncomment the line at the end and change it to `sudo systemctl restart nimbus`
 
-Now, grab my [Rocket Pool ARM64 binaries](https://github.com/jclapis/smartnode/releases/download/v0.0.9-j1/rocketpool-arm64.tar.xz) or [build them from source](https://rocket-pool.readthedocs.io/en/latest/smart-node/non-docker.html). 
-Assuming you want to use the pre-built binaries:
-```
-$ cd /tmp
-$ wget https://github.com/jclapis/smartnode/releases/download/v0.0.9-j1/rocketpool-arm64.tar.xz
-$ tar xf rocketpool-arm64.tar.xz
-$ sudo mv rocketpool /usr/local/bin/
-$ sudo mv rocketpoold /usr/local/bin/
-```
-
-Open `~/.profile` with your editor of choice and add this line to the end:
+Now open `~/.profile` with your editor of choice and add this line to the end:
 ```
 alias rp="rocketpool -d /usr/local/bin/rocketpoold -c /srv/rocketpool"
 ```
@@ -120,7 +126,6 @@ $ rp service config
 ```
 
 Select Geth for your ETH1 client, and Nimbus for your ETH2 client.
-**It's very important that you use Nimbus for ETH2 - it's by far the best choice for the Pi in my testing.**
 
 Finally, create a wallet with `$ rp wallet init` or `$ rp wallet restore`.
 Once that's done, change the permissions on the password and wallet files so the Rocket Pool CLI, node, and watchtower can all use them:
@@ -209,7 +214,34 @@ Save it, then make it executable:
 $ chmod +x /srv/rocketpool/watchtower-log.sh
 ```
 
-All set, now for Geth!
+Finally, we have to give the `eth2` user the ability to call `systemctl restart nimbus` so it can restart Nimbus when new validator keys are created (which is what you set up when you modified `restart-validator.sh` earlier).
+
+Open the `sudoers` file:
+```
+$ sudo nano /etc/sudoers
+```
+
+Add this line under `# Cmnd alias specification`:
+```
+Cmnd_Alias RP_CMDS = /usr/bin/systemctl restart nimbus
+```
+
+Add this line under `# User privilege specification`:
+```
+eth2    ALL=(ALL) NOPASSWD: RP_CMDS
+```
+
+That whole section should now look like this:
+```
+# Cmnd alias specification
+Cmnd_Alias RP_CMDS = /usr/bin/systemctl restart nimbus
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+eth2    ALL=(ALL) NOPASSWD: RP_CMDS
+```
+
+Once it does, save it and exit. All set, now for Geth!
 
 ## Installing Geth
 
@@ -229,9 +261,9 @@ Now go grab [the latest Geth ARM64 binary](https://geth.ethereum.org/downloads/)
 If you get the prebuilt binary, **make sure you pick the one that has `ARM64` in the `Arch` column!** For example:
 ```
 $ cd /tmp
-$ wget https://gethstore.blob.core.windows.net/builds/geth-linux-arm64-1.9.25-e7872729.tar.gz
-$ tar xzf geth-linux-arm64-1.9.25-e7872729.tar.gz
-$ cp geth-linux-arm64-1.9.25-e7872729/geth /srv/geth
+$ wget https://gethstore.blob.core.windows.net/builds/geth-linux-arm64-1.10.1-c2d2f4ed.tar.gz
+$ tar xzf geth-linux-arm64-1.10.1-c2d2f4ed.tar.gz
+$ cp geth-linux-arm64-1.10.1-c2d2f4ed/geth /srv/geth
 ```
 
 Next, create a systemd service for Geth. You can use mine as a template if you want:
@@ -250,7 +282,7 @@ Type=simple
 User=eth1
 Restart=always
 RestartSec=5
-ExecStart= taskset 0x0c /srv/geth/geth --cache 256 --maxpeers 12 --goerli --datadir /mnt/rpdata/geth_data --http --http.port 8545 --http.api eth,net,personal,web3 --ws --ws.port 8546 --ws.api eth,net,personal,web3
+ExecStart= taskset 0x0c ionice -c 3 /srv/geth/geth --cache 256 --maxpeers 12 --goerli --datadir /mnt/rpdata/geth_data --http --http.port 8545 --http.api eth,net,personal,web3 --ws --ws.port 8546 --ws.api eth,net,personal,web3
 
 [Install]
 WantedBy=multi-user.target
@@ -262,9 +294,13 @@ Some notes:
   This way, it won't interfere with Nimbus by stealing some of the same core that Nimbus uses (since Nimbus is single-threaded).
   This is a little optimization, but I've found it to be helpful in avoiding random large inclusion distances if the processes collide.
   - You can remove this during the initial sync if you want to help speed things up, but put it back on during actual validation.
-- You *need* to have `--cache 256` for it to work on a Pi without stealing all the RAM.
+- `ionice -c 3` tells the system that Geth's disk access is a super low priority - if Nimbus needs to access the SSD, it will always have priority over Geth.
+- You *need* to have the `--cache` flag for it to work on a Pi without stealing all the RAM.
+  - For 4 GB Pi's, **this needs to stay at 256**.
+  - For 8 GB Pi's, **you can increase it to 512** so it syncs faster.
 - `--maxpeers 12` is kind of up to you; having a ton of peers in Geth really isn't important since it's just used for ETH2 block proposals.
   This just saves on a little bit of resource usage, so it's another small optimization.
+  **You may want to set it to 24 while syncing, then back down to 12 once syncing is complete.**
 
 Lastly, add a log watcher script so you can check on Geth to see how it's doing:
 ```
@@ -307,9 +343,9 @@ Now go grab [the latest Nimbus ARM64 binary](https://github.com/status-im/nimbus
 If you get the prebuilt binary, **make sure you pick the `arm64v8` one!** For example:
 ```
 $ cd /tmp
-$ wget https://github.com/status-im/nimbus-eth2/releases/download/v1.0.8/nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
-$ tar xzf nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393.tar.gz
-$ cp nimbus-eth2_Linux_arm64v8_1.0.8_5f62a393/build/nimbus_beacon_node /srv/nimbus/nimbus
+$ wget https://github.com/status-im/nimbus-eth2/releases/download/v1.0.10/nimbus-eth2_Linux_arm64v8_1.0.10_77ee2107.tar.gz
+$ tar xzf nimbus-eth2_Linux_arm64v8_1.0.10_77ee2107.tar.gz
+$ cp nimbus-eth2_Linux_arm64v8_1.0.10_77ee2107/build/nimbus_beacon_node /srv/nimbus/nimbus
 ```
 
 Next, create a systemd service for Nimbus. You can use mine as a template if you want:
@@ -328,7 +364,7 @@ Type=simple
 User=eth2
 Restart=always
 RestartSec=5
-ExecStart=taskset 0x01 /srv/nimbus/nimbus --non-interactive --network=pyrmont --data-dir=/mnt/rpdata/nimbus_data --insecure-netkey-password --validators-dir=/srv/rocketpool/data/validators/nimbus/validators --secrets-dir=/srv/rocketpool/data/validators/nimbus/secrets --graffiti="Made on an RPi 4!" --web3-url=ws://localhost:8546 --tcp-port=9001 --udp-port=9001 --log-file="/mnt/rpdata/nimbus_data/log.txt" --rpc --rpc-port=5052 --discv5
+ExecStart=taskset 0x01 ionice -c 2 -n 0 /srv/nimbus/nimbus --max-peers=80 --non-interactive --network=pyrmont --data-dir=/mnt/rpdata/nimbus_data --insecure-netkey-password --validators-dir=/srv/rocketpool/data/validators/nimbus/validators --secrets-dir=/srv/rocketpool/data/validators/nimbus/secrets --graffiti="Made on an RPi 4!" --web3-url=ws://localhost:8546 --tcp-port=9001 --udp-port=9001 --log-file="/mnt/rpdata/nimbus_data/nimbus.log" --rpc --rpc-port=5052
 
 [Install]
 WantedBy=multi-user.target
@@ -338,7 +374,10 @@ Some notes:
 - The user is set to `eth2`.
 - Nimbus is preceeded by `taskset 0x01`. Basically, this constrains Nimbus to only run on CPU 0 (since it's single threaded).
   See the Geth notes for the rationale here.
+- `ionice -c 2 -n 0` tells your system to give Nimbus the highest possible priority for disk I/O (behind critical system processes), so it can process and attest as quickly as possible
 - Change the `--graffiti` to whatever you want.
+- By default, Nimbus will try to connect to 160 peers. That's a lot.
+  I changed the max value using `--max-peers=80` to lighten the CPU load a little, but you are free to experiement with this if you want.
 
 Next, add a log watcher script:
 ```
@@ -464,3 +503,95 @@ If everything is set up right, you should see something like this:
 All of the attestations should say `Attested` for their **Status**, and ideally all of the **Opt. Incl. Dist.** should be 0 (though an occasional 1 or 2 is fine).
 
 And that's all there is to it! Congratulations again, and enjoy validating with your Raspberry Pi!
+
+
+### Updating Rocket Pool, Geth, or Nimbus
+
+When a new version of a client is released, you'll want to upgrade things.
+Because we're not using Rocket Pool's own client deployment process, you will be responsible for keeping track of new Geth and Nimbus releases, in addition to new Rocket Pool releases.
+
+
+#### Upgrading Geth
+
+Shut down the Geth service:
+```
+$ sudo systemctl stop geth
+```
+
+Download the new release, and extract the binary like you did when you first installed the Geth service (instructions above).
+For the sake of this example, I'll assume you have it in `/tmp/geth-linux-arm64-[version]`.
+
+Next, replace the old binary with it:
+```
+$ sudo mv /srv/geth/geth /srv/geth/geth_bak
+$ sudo mv /tmp/geth-linux-arm64-[version]/geth /srv/geth
+```
+This will also back up the old Geth binary as `/srv/geth/geth_bak` if you need to bring it back.
+
+Finally, restart Geth:
+```
+$ sudo systemctl start geth
+```
+
+You may want to monitor the logs a bit (`/srv/geth/log.sh`) to make sure everything is working.
+
+
+#### Upgrading Nimbus
+
+Shut down the Nimbus service:
+```
+$ sudo systemctl stop nimbus
+```
+
+Download the new release, and extract the binary like you did when you first installed the Nimbus service (instructions above).
+For the sake of this example, I'll assume you have it in `/tmp/nimbus-eth2_Linux_arm64v8_[version]`
+
+Next, replace the old binary with it:
+```
+$ sudo mv /srv/nimbus/nimbus /srv/nimbus/nimbus_bak
+$ sudo mv /tmp/nimbus-eth2_Linux_arm64v8_[version]/build/nimbus_beacon_node /srv/nimbus/nimbus
+```
+This will also back up the old Nimbus binary as `/srv/nimbus/nimbus_bak` if you need to bring it back.
+
+Finally, restart Nimbus:
+```
+$ sudo systemctl start geth
+```
+
+You may want to monitor the logs a bit (`/srv/nimbus/log.sh`) to make sure everything worked well.
+
+
+#### Updating Rocket Pool
+
+Shut down the Node and Watchtower services:
+```
+$ sudo systemctl stop rp-node rp-watchtower
+```
+
+Download the new releases:
+
+Next, replace the old binary with it:
+```
+$ sudo mv /usr/local/bin/rocketpool /usr/local/bin/rocketpool_bak
+$ sudo mv /usr/local/bin/rocketpoold /usr/local/bin/rocketpoold_bak
+$ sudo wget https://github.com/jclapis/smartnode-install/releases/latest/download/rocketpool-cli-linux-arm64 -O /usr/local/bin/rocketpool
+$ sudo wget https://github.com/jclapis/smartnode-install/releases/latest/download/rocketpool-daemon-linux-arm64 -O /usr/local/bin/rocketpoold
+```
+This will also back up the old CLI and daemon binaries if you need to bring them back.
+
+You *may* also need to download the new installer package, if it contains an updated `config.yml`.
+This is something you'll have to ask about on Discord.
+If it is the case, then you'll need to replace the file in `/srv/rocketpool/config.yml` with the new one - but be sure to make a backup of the old one first because this will erase all of your settings, so you'll have to copy them over again.
+
+Restart the services:
+```
+$ sudo systemctl start rp-node rp-watchtower
+```
+
+Finally, check the version to make sure that it updated correctly:
+```
+$ rp service version
+
+Rocket Pool client version: 1.0.0-beta.0
+Rocket Pool service version: 1.0.0-beta.0
+```

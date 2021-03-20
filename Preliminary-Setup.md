@@ -11,6 +11,7 @@
   - [Installing Rocket Pool Natively](Native.md)
 - [Overclocking the Pi](Overclocking.md)
 - [Setting Up a Grafana Dashboard](Grafana.md)
+- [Securing and Maintaining your Node](Security.md)
 
 
 # Preliminary Setup
@@ -40,8 +41,9 @@ These are the recommended components that you'll need to buy in order to run Roc
       You could also get a case with integrated fans [like this one](https://www.amazon.com/Raspberry-Armor-Metal-Aluminium-Heatsink/dp/B07VWM4J4L) so you don't have to buy the fans separately.
   - Without a fan:
     - A **fanless case** that acts as one giant heatsink, like [this one](https://www.amazon.com/Akasa-RA08-M1B-Raspberry-case-Aluminium/dp/B081VYVNTX).
-      I don't know how the system temperatures compare to a fanned case, but this is a nice option since it's silent.
+      This is a nice option since it's silent, but your Pi **will** get quite hot - especially during the initial blockchain sync process.
       Credit to Discord user Ken for pointing me in this direction!
+  - As a general rule, I recommend going **with a fan** because we're going to be overclocking the Pi significantly.
 
 
 You can get a lot of this stuff bundled together for convenience - for example, [Canakit offers a kit](https://www.amazon.com/CanaKit-Raspberry-8GB-Starter-Kit/dp/B08956GVXN) with many components included.

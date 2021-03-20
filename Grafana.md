@@ -1,3 +1,8 @@
+# Setting up Rocket Pool on a Raspberry Pi
+### Guide v2.0 - for RP Beta 3.0
+
+![](images/Logo-small.png)
+
 ## *Navigation*
 - [Overview](Overview.md)
 - [Preliminary Setup](Preliminary-Setup.md)
@@ -6,6 +11,7 @@
   - [Installing Rocket Pool Natively](Native.md)
 - [Overclocking the Pi](Overclocking.md)
 - **Setting Up a Grafana Dashboard**
+- [Securing and Maintaining your Node](Security.md)
 
 
 # Setting Up a Grafana Dashboard
@@ -17,6 +23,8 @@ In this section, I'll show you how to set up a Grafana server on your Pi and giv
 **WARNING: this dashboarding setup uses some of Nimbus's still-in-development features.
 Nimbus doesn't expose its metrics by default yet, so you have to manually compile it with some special flags.
 This means that this process will ONLY WORK with Native setups - it WILL NOT WORK with Docker setups yet.**
+
+**If enough people ask for it, maybe I'll publish a modified Docker image that has metrics enabled so you can do this.**
 
 With that out of the way, here is a quick glance of my dashboard that you'll put together for your Pi:
 
@@ -99,9 +107,22 @@ Add this to the end, in the `scrape_configs` section, which will tell it to gath
       - targets: ['localhost:8008']
 ```
 
-Finally, restart it:
+Now modify the prometheus process so it is limited to one core (the "free" one we left alone during the Native setup):
 ```
-$ sudo systemctl restart prometheus
+$ sudo nano /lib/systemd/system/prometheus.service
+```
+
+Change the `ExecStart` line by adding `taskset 0x02` in front of it:
+```
+ExecStart=taskset 0x02 /usr/bin/prometheus $ARGS
+```
+
+Do the same for `/lib/systemd/system/prometheus-node-exporter.service`, which is the process that collects hardware / OS metrics.
+
+Once they're both updated, restart them:
+```
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart prometheus prometheus-node-exporter
 ```
 
 Great! Now you have a system that collects and stores metrics from Nimbus and your Pi's hardware / OS.
@@ -118,7 +139,10 @@ $ wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
 $ echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 $ sudo apt update
 $ sudo apt install grafana
-...
+```
+
+Now modify `/lib/systemd/system/grafana-server.service` by adding `taskset 0x02` to the start of the `ExecStart` line, then enable and start it:
+```
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable grafana-server
 $ sudo systemctl start grafana-server

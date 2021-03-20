@@ -1,3 +1,8 @@
+# Setting up Rocket Pool on a Raspberry Pi
+### Guide v2.0 - for RP Beta 3.0
+
+![](images/Logo-small.png)
+
 ## *Navigation*
 - [Overview](Overview.md)
 - [Preliminary Setup](Preliminary-Setup.md)
@@ -6,6 +11,7 @@
   - [Installing Rocket Pool Natively](Native.md)
 - **Overclocking the Pi**
 - [Setting Up a Grafana Dashboard](Grafana.md)
+- [Securing and Maintaining your Node](Security.md)
 
 
 # Overclocking the Pi

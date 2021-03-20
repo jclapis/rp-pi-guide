@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1614559767161,
+  "iteration": 1616204620962,
   "links": [],
   "panels": [
     {
@@ -145,7 +145,7 @@
       "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "apt_upgrades_pending",
+          "expr": "max(apt_upgrades_pending)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -338,6 +338,7 @@
       "type": "stat"
     },
     {
+      "cacheTimeout": null,
       "datasource": null,
       "description": "",
       "fieldConfig": {
@@ -346,21 +347,34 @@
             "mode": "thresholds"
           },
           "custom": {},
-          "mappings": [],
+          "decimals": 4,
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#d44a3a",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "#FADE2A",
+                "value": 0
+              },
+              {
+                "color": "#73BF69",
+                "value": 0.0001
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "ETH"
         },
         "overrides": []
       },
@@ -370,12 +384,15 @@
         "x": 16,
         "y": 0
       },
-      "id": 96,
+      "id": 144,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -389,13 +406,16 @@
       "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "(sum(attached_validator_balance{job=\"nimbus\"})/1000000000-(count(attached_validator_balance{job=\"nimbus\"} > 16)*32))/(count(attached_validator_balance{job=\"nimbus\"} > 16)*32)",
+          "expr": "sum(attached_validator_balance{job=\"nimbus\"})/1000000000 - sum(attached_validator_balance{job=\"nimbus\"} offset 1d != 0)/1000000000 - (32 * count(attached_validator_balance{job=\"nimbus\"} > 16)) + (32 * count(attached_validator_balance{job=\"nimbus\"} offset 1d > 16))",
+          "instant": false,
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Earnings Percent",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Daily Rate",
       "type": "stat"
     },
     {
@@ -476,6 +496,62 @@
       "type": "stat"
     },
     {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 13,
+        "y": 3
+      },
+      "id": 154,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.4.3",
+      "targets": [
+        {
+          "expr": "next_action_wait",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Next Attestation",
+      "type": "stat"
+    },
+    {
       "cacheTimeout": null,
       "datasource": null,
       "description": "",
@@ -518,8 +594,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
-        "x": 13,
+        "w": 2,
+        "x": 16,
         "y": 3
       },
       "id": 152,
@@ -554,87 +630,6 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "APY (via Daily)",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {},
-          "decimals": 4,
-          "mappings": [
-            {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#d44a3a",
-                "value": null
-              },
-              {
-                "color": "#FADE2A",
-                "value": 0
-              },
-              {
-                "color": "#73BF69",
-                "value": 0.0001
-              }
-            ]
-          },
-          "unit": "ETH"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 16,
-        "y": 3
-      },
-      "id": 144,
-      "interval": null,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.4.3",
-      "targets": [
-        {
-          "expr": "sum(attached_validator_balance{job=\"nimbus\"})/1000000000 - sum(attached_validator_balance{job=\"nimbus\"} offset 1d != 0)/1000000000 - (32 * count(attached_validator_balance{job=\"nimbus\"} > 16)) + (32 * count(attached_validator_balance{job=\"nimbus\"} offset 1d > 16))",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Daily Rate",
       "type": "stat"
     },
     {
@@ -2280,6 +2275,6 @@
   },
   "timezone": "",
   "title": "Jcrtp's Nimbus Dashboard",
-  "uid": "pgeNfj2Wz2b",
-  "version": 10
+  "uid": "pgeNfj2Wz2a",
+  "version": 13
 }

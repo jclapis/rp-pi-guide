@@ -11,6 +11,7 @@
   - [Installing Rocket Pool Natively](Native.md)
 - [Overclocking the Pi](Overclocking.md)
 - [Setting Up a Grafana Dashboard](Grafana.md)
+- [Securing and Maintaining your Node](Security.md)
 
 
 # Preparing Ubuntu for Rocket Pool
