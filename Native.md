@@ -505,13 +505,13 @@ All of the attestations should say `Attested` for their **Status**, and ideally 
 And that's all there is to it! Congratulations again, and enjoy validating with your Raspberry Pi!
 
 
-### Updating Rocket Pool, Geth, or Nimbus
+## Updating Rocket Pool, Geth, or Nimbus
 
 When a new version of a client is released, you'll want to upgrade things.
 Because we're not using Rocket Pool's own client deployment process, you will be responsible for keeping track of new Geth and Nimbus releases, in addition to new Rocket Pool releases.
 
 
-#### Upgrading Geth
+### Upgrading Geth
 
 Shut down the Geth service:
 ```
@@ -536,7 +536,7 @@ $ sudo systemctl start geth
 You may want to monitor the logs a bit (`/srv/geth/log.sh`) to make sure everything is working.
 
 
-#### Upgrading Nimbus
+### Upgrading Nimbus
 
 Shut down the Nimbus service:
 ```
@@ -561,7 +561,7 @@ $ sudo systemctl start geth
 You may want to monitor the logs a bit (`/srv/nimbus/log.sh`) to make sure everything worked well.
 
 
-## Updating Rocket Pool
+### Updating Rocket Pool
 
 Shut down the Node and Watchtower services:
 ```
