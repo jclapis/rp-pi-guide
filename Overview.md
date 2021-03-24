@@ -60,7 +60,12 @@ For people that want a quick view of what configuration to use, here's the summa
 
 ## Change Log
 
-### v2.0 - March 16 2021
+
+### March 23, 2021
+- Updated the Docker and Native sections for the new 1.0.0-beta.1 RP release
+
+
+### March 16, 2021 - v2.0
 - Added updates for Rocket Pool Beta 3.0
 - Added a fanless case suggestion
 - Added the TL;DR to the overview page

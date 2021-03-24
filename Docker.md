@@ -405,6 +405,11 @@ https://github.com/jclapis/smartnode-install/releases
 
 If you see one that looks recent and references the new version of Rocket Pool, grabbing it just involves repeating the same steps you did when you first installed it.
 
+Stop the Rocket Pool services:
+```
+$ rocketpool service stop
+```
+
 Download the new Rocket Pool application:
 ```
 $ cd ~
@@ -426,17 +431,24 @@ Run it:
 $ ./install.sh
 ```
 
-Finally, remove it:
+Remove it:
 ```
 $ rm install.sh
 ```
 
-All done! You can check the version of everything with:
+Finally, start the Rocket Pool services again:
+```
+$ rocketpool service start
+```
+
+All done! Check the version of everything to make sure that the upgrade was successful:
 ```
 $ rocketpool service version
 
-Rocket Pool client version: 1.0.0-beta.0
-Rocket Pool service version: 1.0.0-beta.0
+Rocket Pool client version: 1.0.0-beta.1
+Rocket Pool service version: 1.0.0-beta.1
+Selected Eth 1.0 client: Geth (jclapis/go-ethereum:v1.10.1)
+Selected Eth 2.0 client: Nimbus (jclapis/nimbus:v1.0.11)
 ```
 
 Both the client and service should match the new release version.

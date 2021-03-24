@@ -580,7 +580,7 @@ $ sudo wget https://github.com/jclapis/smartnode-install/releases/latest/downloa
 This will also back up the old CLI and daemon binaries if you need to bring them back.
 
 You *may* also need to download the new installer package, if it contains an updated `config.yml`.
-This is something you'll have to ask about on Discord.
+This is something you'll have to ask about on Discord, or compare the commit history for yourself.
 If it is the case, then you'll need to replace the file in `/srv/rocketpool/config.yml` with the new one - but be sure to make a backup of the old one first because this will erase all of your settings, so you'll have to copy them over again.
 
 Restart the services:
@@ -592,6 +592,8 @@ Finally, check the version to make sure that it updated correctly:
 ```
 $ rp service version
 
-Rocket Pool client version: 1.0.0-beta.0
-Rocket Pool service version: 1.0.0-beta.0
+Rocket Pool client version: 1.0.0-beta.1
+Rocket Pool service version: 1.0.0-beta.1
+Selected Eth 1.0 client: Geth (jclapis/go-ethereum:v1.10.1)
+Selected Eth 2.0 client: Nimbus (jclapis/nimbus:v1.0.11)
 ```
