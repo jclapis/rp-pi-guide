@@ -561,7 +561,7 @@ $ sudo systemctl start geth
 You may want to monitor the logs a bit (`/srv/nimbus/log.sh`) to make sure everything worked well.
 
 
-#### Updating Rocket Pool
+## Updating Rocket Pool
 
 Shut down the Node and Watchtower services:
 ```

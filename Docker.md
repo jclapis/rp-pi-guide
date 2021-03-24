@@ -395,7 +395,7 @@ And that's all there is to it! Congratulations again, and enjoy validating with 
 
 
 
-### Updating Rocket Pool to New Releases
+## Updating Rocket Pool to New Releases
 
 Periodically, you'll see new releases of Rocket Pool come out.
 I'll do my best to keep my ARM releases up to date for the Pi.
