@@ -182,8 +182,12 @@ I have a slower SSD with read IOPS of 5k and write IOPS of 1k, and it has a lot 
 If you use an SSD slower than the specs above, just be prepared that you might see a lot of missed attestations.
 If yours meets or exceeds them, then you're all set and can move on.
 
-Some poor performance may be addressed with SSD firmware updates. This has been experienced with brand new Samsung T7. Two SSDs fresh out of the box could only do 3.5K read IOPS and 1.2K write IOPS. After applying all available firmware updates, the performance is equivalent to the example shown above.
-Check with your manufacturer's support website for the latest firmware and make sure your drive is up to date. You may have to update the firmware multiple times until there are no more updates left.
+*Note:
+If your SSD doesn't meet the above specs but it should, you might be able to fix it with a firmware update.
+For example, this has been experienced by the Rocket Pool community with the Samsung T7.
+Two of them fresh out of the box only showed 3.5K read IOPS and 1.2K write IOPS.
+After applying all available firmware updates, the performance was back up to the numbers shown in the above example.
+Check with your manufacturer's support website for the latest firmware and make sure your drive is up to date - you may have to update the firmware multiple times until there are no more updates left.*
 
 Last but not least, remove the test file you just made:
 ```
