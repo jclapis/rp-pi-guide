@@ -120,20 +120,12 @@ $ source ~/.profile
 
 This will let you interact with Rocket Pool's CLI with the `rp` command, which is a nice shortcut.
 
-Now, run the Rocket Pool configuration:
+Finally, run the Rocket Pool configuration:
 ```
 $ rp service config
 ```
 
 Select Geth for your ETH1 client, and Nimbus for your ETH2 client.
-
-Finally, create a wallet with `$ rp wallet init` or `$ rp wallet restore`.
-Once that's done, change the permissions on the password and wallet files so the Rocket Pool CLI, node, and watchtower can all use them:
-```
-$ sudo chown eth2:eth2 -R /srv/rocketpool/data
-$ sudo chmod 660 /srv/rocketpool/data/password
-$ sudo chmod 660 /srv/rocketpool/data/wallet
-```
 
 
 ### Creating the Services
@@ -414,12 +406,20 @@ $ sudo systemctl enable rp-node
 $ sudo systemctl enable rp-watchtower
 ```
 
-And finally, now that they're enabled, kick them all off:
+Now that they're enabled, kick them all off:
 ```
 $ sudo systemctl start geth
 $ sudo systemctl start nimbus
 $ sudo systemctl start rp-node
 $ sudo systemctl start rp-watchtower
+```
+
+The last step is to create a wallet with `$ rp wallet init` or `$ rp wallet restore`.
+Once that's done, change the permissions on the password and wallet files so the Rocket Pool CLI, node, and watchtower can all use them:
+```
+$ sudo chown eth2:eth2 -R /srv/rocketpool/data
+$ sudo chmod 660 /srv/rocketpool/data/password
+$ sudo chmod 660 /srv/rocketpool/data/wallet
 ```
 
 
