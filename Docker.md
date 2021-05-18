@@ -97,8 +97,9 @@ This is still the case for the Pi, but we have to do a few extra things to make 
 
 ### Choosing the ETH1 and ETH2 Client
 
-Start by running the normal Rocket Pool configuration process:
+Start by flagging the Rocket Pool CLI as executable and running the normal Rocket Pool configuration process:
 ```
+$ chmod +x ~/bin/rocketpool
 $ rocketpool service config
 ```
 
