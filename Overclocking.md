@@ -130,6 +130,10 @@ $ sudo apt install stress
 $ pip3 install stressberry
 $ source ~/.profile
 ```
+Once you have installed the above dependencies, you will need to reboot your raspberry pi to have permissioning setup for vcgencmd:
+```
+sudo reboot
+```
 
 Next, run it like this:
 ```
